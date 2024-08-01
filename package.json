@@ -9,17 +9,22 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ckeditor/ckeditor5-build-classic": "^42.0.2",
+    "@ckeditor/ckeditor5-react": "^8.0.0",
     "@prisma/client": "^5.17.0",
     "busboy": "^1.6.0",
     "daisyui": "^4.12.10",
     "formidable": "^3.5.1",
+    "mime-types": "^2.1.35",
     "next": "14.2.5",
     "next-themes": "^0.3.0",
     "react": "^18",
     "react-dom": "^18",
     "react-hot-toast": "^2.4.1",
     "react-pro-sidebar": "^1.1.0",
-    "react-toastify": "^10.0.5"
+    "react-toastify": "^10.0.5",
+    "sanitize-html": "^2.13.0",
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.19",

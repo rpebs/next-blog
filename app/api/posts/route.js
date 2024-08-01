@@ -3,6 +3,8 @@ import { promises as fs } from "fs";
 import path from "path";
 import { NextResponse } from "next/server";
 import { validatePostData } from "../../../lib/validators.js"; // Sesuaikan path sesuai lokasi file
+import mime from "mime-types"; // For file type validation
+import { v4 as uuidv4 } from "uuid"; // For unique filename generation
 
 export const config = {
   api: {
@@ -21,26 +23,16 @@ export const GET = async (req) => {
     return NextResponse.json({ error: "Invalid page or pageSize." }, { status: 400 });
   }
 
-  // Construct the query with filters and pagination
   const where = search
     ? {
         OR: [
-          {
-            title: {
-              contains: search,
-            },
-          },
-          {
-            content: {
-              contains: search,
-            },
-          },
+          { title: { contains: search } },
+          { content: { contains: search } },
         ],
       }
     : {};
 
   try {
-    // Ensure Prisma findMany query is correctly formed
     const [posts, totalPosts] = await Promise.all([
       prisma.post.findMany({
         where,
@@ -63,7 +55,6 @@ export const POST = async (req) => {
   try {
     const formData = await req.formData();
 
-    // Extract file and other fields
     const file = formData.get("file");
     const title = formData.get("title");
     const content = formData.get("content");
@@ -74,11 +65,26 @@ export const POST = async (req) => {
       return NextResponse.json({ error: validationErrors }, { status: 400 });
     }
 
+    // Validate file type and size
+    const allowedMimeTypes = ["image/jpeg", "image/png", "image/gif"];
+    const maxFileSize = 5 * 1024 * 1024; // 5 MB
+    if (!allowedMimeTypes.includes(file.type) || file.size > maxFileSize) {
+      return NextResponse.json(
+        { error: "Invalid file type or size." },
+        { status: 400 }
+      );
+    }
+
     // Save file
     const buffer = Buffer.from(await file.arrayBuffer());
-    const filename = file.name.replace(/ /g, "_");
-    const filePath = path.join(process.cwd(), "public/uploads", filename);
+    const extension = mime.extension(file.type);
+    const filename = `${uuidv4()}.${extension}`;
+    const uploadDir = path.join(process.cwd(), "public/uploads");
 
+    // Ensure the directory exists
+    await fs.mkdir(uploadDir, { recursive: true });
+
+    const filePath = path.join(uploadDir, filename);
     await fs.writeFile(filePath, buffer);
 
     // Insert post into database

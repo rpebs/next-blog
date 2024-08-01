@@ -4,6 +4,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
 export default function NewPost() {
   const [title, setTitle] = useState("");
@@ -105,7 +107,7 @@ export default function NewPost() {
   };
 
   return (
-    <div>
+    <div className="w-1/2">
       <h1 className="text-2xl font-bold mb-4">
         {isEditing ? "Edit Post" : "New Post"}
       </h1>
@@ -127,27 +129,13 @@ export default function NewPost() {
             <p className="text-red-500 text-sm">{errors.title}</p>
           )}
         </div>
-        <div className="mb-4">
-          <label className="block mb-1" htmlFor="content">
-            Content
-          </label>
-          <textarea
-            id="content"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            className={`w-full px-3 py-2 border rounded ${
-              errors.content ? "border-red-500" : ""
-            }`}
-          />
-          {errors.content && (
-            <p className="text-red-500 text-sm">{errors.content}</p>
-          )}
-        </div>
+
         {isEditing && (
           <div className="mb-4">
             <label className="block mb-1" htmlFor="file">
               Current Image
             </label>
+            
             <Image
               src={image}
               alt="Preview"
@@ -173,6 +161,27 @@ export default function NewPost() {
           />
           {errors.file && <p className="text-red-500 text-sm">{errors.file}</p>}
         </div>
+        
+        <div className="mb-4">
+          <label className="block mb-1" htmlFor="content">
+            Content
+          </label>
+          <CKEditor
+            editor={ClassicEditor}
+            data={content}
+            onChange={(event, editor) => {
+              const data = editor.getData();
+              setContent(data);
+            }}
+            className={`w-full px-3 py-2 border rounded ${
+              errors.content ? "border-red-500" : ""
+            }`}
+          />
+          {errors.content && (
+            <p className="text-red-500 text-sm">{errors.content}</p>
+          )}
+        </div>
+      
         <button
           type="submit"
           className="px-4 py-2 bg-blue-500 text-white rounded"
@@ -182,4 +191,4 @@ export default function NewPost() {
       </form>
     </div>
   );
-} 
+}

@@ -6,12 +6,19 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ModalConfirm from "../../components/ModalConfirm"; // Sesuaikan path jika berbeda
 
+
 const fetchPosts = async (search, page, pageSize) => {
   const response = await fetch(
     `/api/posts?search=${search}&page=${page}&pageSize=${pageSize}`
   );
   const data = await response.json();
   return data;
+};
+
+const truncateContent = (content, length) => {
+  return content.length > length
+    ? content.substring(0, length) + "..."
+    : content;
 };
 
 export default function PostList() {
@@ -112,7 +119,9 @@ export default function PostList() {
                 />
               </td>
               <td className="py-2 px-4 border-b">{post.title}</td>
-              <td className="py-2 px-4 border-b">{post.content}</td>
+              <td className="py-2 px-4 border-b">
+                <div dangerouslySetInnerHTML={{ __html: truncateContent(post.content, 100) }} />
+              </td>
               <td className="py-2 px-4 border-b">
                 <Link
                   href={`/admin/posts/new?id=${post.id}`}
