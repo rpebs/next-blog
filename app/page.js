@@ -6,6 +6,8 @@ import BlogCard from "./components/BlogCard";
 export default async function Home() {
   return (
     <div>
+        <Navbar />
+
       
     </div>
   );

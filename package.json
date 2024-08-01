@@ -9,16 +9,17 @@
     "lint": "next lint"
   },
   "dependencies": {
-    
     "@prisma/client": "^5.17.0",
     "busboy": "^1.6.0",
     "daisyui": "^4.12.10",
     "formidable": "^3.5.1",
-  
     "next": "14.2.5",
     "next-themes": "^0.3.0",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "react-hot-toast": "^2.4.1",
+    "react-pro-sidebar": "^1.1.0",
+    "react-toastify": "^10.0.5"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.19",

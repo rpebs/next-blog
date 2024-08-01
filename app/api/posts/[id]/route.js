@@ -63,7 +63,7 @@ export const PUT = async (req, { params }) => {
     const content = formData.get("content");
 
     // Validate data
-    const validationErrors = validatePostData(title, content, file);
+    const validationErrors = validatePostData(title, content, file, true);
     if (Object.keys(validationErrors).length > 0) {
       return NextResponse.json({ error: validationErrors }, { status: 400 });
     }

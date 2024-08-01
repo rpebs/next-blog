@@ -2,6 +2,8 @@
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function NewPost() {
   const [title, setTitle] = useState("");
@@ -11,6 +13,7 @@ export default function NewPost() {
   const [errors, setErrors] = useState({});
   const [isEditing, setIsEditing] = useState(false);
   const [postId, setPostId] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(""); // State for success message
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -53,8 +56,8 @@ export default function NewPost() {
       errors.content = "Content is required.";
       isValid = false;
     }
-
-    if (isEditing && !file) {
+    
+    if (!isEditing && !file) {
       errors.file = "Image is required when uploading a new image.";
       isValid = false;
     }
@@ -91,6 +94,10 @@ export default function NewPost() {
         throw new Error(errorText);
       }
 
+      const message = isEditing ? "Post updated successfully" : "Post created successfully";
+      setSuccessMessage(message); // Set success message state
+      toast.success(message); // Show toast notification
+      
       router.push("/admin/posts");
     } catch (error) {
       console.error("Submit Error:", error);
@@ -175,4 +182,4 @@ export default function NewPost() {
       </form>
     </div>
   );
-}
+} 

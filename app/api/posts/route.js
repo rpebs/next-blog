@@ -4,7 +4,6 @@ import path from "path";
 import { NextResponse } from "next/server";
 import { validatePostData } from "../../../lib/validators.js"; // Sesuaikan path sesuai lokasi file
 
-
 export const config = {
   api: {
     bodyParser: false, // Disable Next.js body parsing for file uploads
@@ -12,13 +11,52 @@ export const config = {
 };
 
 export const GET = async (req) => {
-  const post = await prisma.post.findMany();
+  const { search = "", page = 1, pageSize = 10 } = Object.fromEntries(new URL(req.url).searchParams);
 
-  if (!post) {
-    return NextResponse.json({ error: "Post not found." }, { status: 404 });
+  const currentPage = parseInt(page, 10);
+  const pageSizeNumber = parseInt(pageSize, 10);
+
+  // Validate page and pageSize
+  if (isNaN(currentPage) || isNaN(pageSizeNumber) || currentPage < 1 || pageSizeNumber < 1) {
+    return NextResponse.json({ error: "Invalid page or pageSize." }, { status: 400 });
   }
 
-  return NextResponse.json(post);
+  // Construct the query with filters and pagination
+  const where = search
+    ? {
+        OR: [
+          {
+            title: {
+              contains: search,
+            },
+          },
+          {
+            content: {
+              contains: search,
+            },
+          },
+        ],
+      }
+    : {};
+
+  try {
+    // Ensure Prisma findMany query is correctly formed
+    const [posts, totalPosts] = await Promise.all([
+      prisma.post.findMany({
+        where,
+        skip: (currentPage - 1) * pageSizeNumber,
+        take: pageSizeNumber,
+      }),
+      prisma.post.count({ where }),
+    ]);
+
+    const totalPages = Math.ceil(totalPosts / pageSizeNumber);
+
+    return NextResponse.json({ posts, totalPages, totalData: totalPosts });
+  } catch (error) {
+    console.error("Error occurred:", error);
+    return NextResponse.json({ error: "Failed to fetch posts." }, { status: 500 });
+  }
 };
 
 export const POST = async (req) => {
@@ -31,7 +69,7 @@ export const POST = async (req) => {
     const content = formData.get("content");
 
     // Validate data
-    const validationErrors = validatePostData(title, content, file);
+    const validationErrors = validatePostData(title, content, file, false);
     if (Object.keys(validationErrors).length > 0) {
       return NextResponse.json({ error: validationErrors }, { status: 400 });
     }

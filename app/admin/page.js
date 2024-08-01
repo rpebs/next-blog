@@ -20,7 +20,7 @@ export default async function Admin() {
             <div className="card-body">
               <h2 className="card-title">Total Postingan</h2>
               <p className="text-3xl font-bold">{posts}</p>
-              <Link className="w-1/2 btn btn-primary ms-auto" href="/post">
+              <Link className="w-1/2 btn btn-primary ms-auto" href="/admin/posts">
                 View Postingan
               </Link>
             </div>
