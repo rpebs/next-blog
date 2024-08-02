@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+import LogoutButton from "./LogoutButton";
 
 const SidebarMenu = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -147,6 +148,9 @@ const SidebarMenu = () => {
                 </svg>
                 <span className="ms-3">Support</span>
               </a>
+            </li>
+            <li>
+              <LogoutButton />
             </li>
           </ul>
         </div>

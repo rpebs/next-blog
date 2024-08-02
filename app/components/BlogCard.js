@@ -6,13 +6,13 @@ import sanitizeHtml from 'sanitize-html'
 const BlogCard = ({ post }) => {
   return (
     <div className="card bg-base-100 shadow-xl">
-      <figure>
+      <figure className="w-full h-60">
         <Image
           src={post.image}
           alt={post.title}
           width={400}
           height={200}
-          className="object-cover"
+          className="object-cover h-full w-full"
         />
       </figure>
       <div className="card-body">
